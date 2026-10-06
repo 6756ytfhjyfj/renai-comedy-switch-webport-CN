@@ -1,0 +1,7 @@
+[preload  storage="./data/bgimage/room.jpg"  ]
+[preload  storage="./data/bgimage/S__5169167.jpg"  ]
+[preload  storage="./data/bgimage/住宅街（日中）.jpg"  ]
+[preload  storage="./data/bgimage/街中の自動販売機（日中）.jpg"  ]
+[preload  storage="./data/bgimage/IMG_1340.png"  ]
+[preload  storage="./data/bgimage/無題3430_20260505023503.png"  ]
+[return]

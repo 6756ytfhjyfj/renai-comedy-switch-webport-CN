@@ -1,0 +1,5 @@
+[preload  storage="./data/bgimage/無題2770_20260510003143.png"  ]
+[preload  storage="./data/bgimage/S__5169167.jpg"  ]
+[preload  storage="./data/bgimage/room.jpg"  ]
+[preload  storage="./data/bgimage/IMG_8046.png"  ]
+[return]

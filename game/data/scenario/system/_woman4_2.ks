@@ -1,0 +1,6 @@
+[preload  storage="./data/bgimage/住宅街（日中）.jpg"  ]
+[preload  storage="./data/bgimage/room.jpg"  ]
+[preload  storage="./data/bgimage/IMG_6883.png"  ]
+[preload  storage="./data/bgimage/IMG_6884.png"  ]
+[preload  storage="./data/bgimage/住宅街（夕方）.jpg"  ]
+[return]

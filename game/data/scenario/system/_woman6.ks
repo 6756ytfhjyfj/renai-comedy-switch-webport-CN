@@ -1,0 +1,7 @@
+[preload  storage="./data/bgimage/都会の街中（日中）.jpg"  ]
+[preload  storage="./data/bgimage/喫茶店（日中）.jpg"  ]
+[preload  storage="./data/bgimage/ショッピングモール２.jpg"  ]
+[preload  storage="./data/bgimage/無題2688_20260110231113.png"  ]
+[preload  storage="./data/bgimage/無題2688_20260110231125.png"  ]
+[preload  storage="./data/bgimage/無題2688_20260110231130.png"  ]
+[return]

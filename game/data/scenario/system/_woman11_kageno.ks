@@ -1,0 +1,5 @@
+[preload  storage="./data/bgimage/教室の前の方（夕方）.jpg"  ]
+[preload  storage="./data/bgimage/学校の屋上（夕方）.jpg"  ]
+[preload  storage="./data/bgimage/IMG_7420.png"  ]
+[preload  storage="./data/bgimage/IMG_7421.png"  ]
+[return]

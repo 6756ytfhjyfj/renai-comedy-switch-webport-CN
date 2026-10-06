@@ -1,0 +1,6 @@
+[preload  storage="./data/bgimage/無題2834_20260208003520.png"  ]
+[preload  storage="./data/bgimage/無題2834_20260208143357.png"  ]
+[preload  storage="./data/bgimage/無題2834_20260208143434.png"  ]
+[preload  storage="./data/bgimage/無題2834_20260208143341.png"  ]
+[preload  storage="./data/bgimage/飲食店の店内（夜）.jpg"  ]
+[return]

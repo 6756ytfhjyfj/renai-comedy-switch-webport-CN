@@ -1,0 +1,7 @@
+[preload  storage="./data/bgimage/IMG_7419.png"  ]
+[preload  storage="./data/bgimage/room.jpg"  ]
+[preload  storage="./data/bgimage/無題2804_20260203232710.png"  ]
+[preload  storage="./data/bgimage/無題2804_20260203232633.png"  ]
+[preload  storage="./data/bgimage/IMG_7417.png"  ]
+[preload  storage="./data/bgimage/無題2805_20260203232842.png"  ]
+[return]

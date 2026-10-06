@@ -1,0 +1,7 @@
+[preload  storage="./data/bgimage/無題2725_20260116161914.png"  ]
+[preload  storage="./data/fgimage/chara/1/チャラ男立ち絵_20260116110237.png"  ]
+[preload  storage="./data/bgimage/無題2725_20260116150844.png"  ]
+[preload  storage="./data/bgimage/無題2725_20260116150840.png"  ]
+[preload  storage="./data/bgimage/無題2725_20260116151009.png"  ]
+[preload  storage="./data/bgimage/IMG_6601.png"  ]
+[return]

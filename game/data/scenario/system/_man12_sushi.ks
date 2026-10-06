@@ -1,0 +1,6 @@
+[preload  storage="./data/bgimage/IMG_9486.png"  ]
+[preload  storage="./data/bgimage/IMG_9499.png"  ]
+[preload  storage="./data/bgimage/無題3041_20260321175850.png"  ]
+[preload  storage="./data/bgimage/無題3041_20260321175902.png"  ]
+[preload  storage="./data/fgimage/chara/16/無題3045_20260321180050.png"  ]
+[return]

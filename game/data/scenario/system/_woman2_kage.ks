@@ -1,0 +1,6 @@
+[preload  storage="./data/bgimage/rouka.jpg"  ]
+[preload  storage="./data/bgimage/room.jpg"  ]
+[preload  storage="./data/bgimage/無題2811_20260529122254.png"  ]
+[preload  storage="./data/bgimage/無題3310_20260529122624.png"  ]
+[preload  storage="./data/bgimage/IMG_1531.png"  ]
+[return]

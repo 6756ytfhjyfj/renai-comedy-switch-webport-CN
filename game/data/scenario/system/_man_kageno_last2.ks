@@ -1,0 +1,5 @@
+[preload  storage="./data/bgimage/room.jpg"  ]
+[preload  storage="./data/bgimage/学校の音楽室（日中）.jpg"  ]
+[preload  storage="./data/bgimage/学校の職員室（日中）.jpg"  ]
+[preload  storage="./data/bgimage/school_infirmary02.png"  ]
+[return]

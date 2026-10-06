@@ -1,0 +1,7 @@
+[preload  storage="./data/bgimage/rouka.jpg"  ]
+[preload  storage="./data/bgimage/IMG_8550.png"  ]
+[preload  storage="./data/bgimage/IMG_8548.png"  ]
+[preload  storage="./data/bgimage/IMG_8549.png"  ]
+[preload  storage="./data/bgimage/room.jpg"  ]
+[preload  storage="./data/bgimage/S__5169167.jpg"  ]
+[return]
