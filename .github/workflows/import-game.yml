@@ -1,0 +1,45 @@
+name: Import complete game resources
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/import-game.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: import-game
+  cancel-in-progress: false
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check repository
+        run: |
+          test ! -f game/data/system/Config.tjs
+      - name: Download complete website
+        env:
+          BUNDLE_URL: https://broker-warm-precious-survival.trycloudflare.com/site.zip
+        run: |
+          curl --fail --location --retry 8 --retry-all-errors --retry-delay 3 --connect-timeout 20 --max-time 1800 --continue-at - --silent --show-error --write-out 'Downloaded %{size_download} bytes at %{speed_download} bytes/s\n' "$BUNDLE_URL" --output "$RUNNER_TEMP/game-site.zip"
+          echo "230461cf3b787c7067f9398b21b10907dc7292fd3a91e5e4d451ac76e5df312c  $RUNNER_TEMP/game-site.zip" | sha256sum --check -
+      - name: Extract and verify complete website
+        run: |
+          mkdir -p "$RUNNER_TEMP/game-site"
+          unzip -q "$RUNNER_TEMP/game-site.zip" -d "$RUNNER_TEMP/game-site"
+          test -f "$RUNNER_TEMP/game-site/index.html"
+          test -f "$RUNNER_TEMP/game-site/game/data/others/lang/ch.json"
+          test -f "$RUNNER_TEMP/game-site/game/data/system/Config.tjs"
+          test "$(find "$RUNNER_TEMP/game-site" -type f | wc -l)" -eq 2591
+          test "$(find "$RUNNER_TEMP/game-site/game/data/video" -iname '*.mp4' | wc -l)" -eq 23
+          test -z "$(find "$RUNNER_TEMP/game-site" -iname '*.sav' -print -quit)"
+      - name: Commit full website to this repository
+        run: |
+          rsync -a --exclude='.github/' "$RUNNER_TEMP/game-site/" "$GITHUB_WORKSPACE/"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -c core.autocrlf=false add .
+          git commit --quiet -m 'Import full Chinese game with mobile landscape web support'
+          git push origin HEAD:main
+          echo 'Full game resources are now stored permanently in this repository.' >> "$GITHUB_STEP_SUMMARY"
