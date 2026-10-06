@@ -27,7 +27,8 @@
       }).observe(document.getElementById("tyrano_base"), { childList: true, subtree: true });
       if (!kag.tmp.ready_audio) tell("game-needs-tap");
     }
-    if (kag.stat.current_scenario === "title_screen.ks" && kag.stat.is_strong_stop) {
+    const titleButton = document.querySelector(".web_title_button.img_12");
+    if (kag.stat.current_scenario === "title_screen.ks" && kag.stat.is_strong_stop && titleButton?.getClientRects().length) {
       tell("game-ready"); clearInterval(timer);
     }
   }, 100);
