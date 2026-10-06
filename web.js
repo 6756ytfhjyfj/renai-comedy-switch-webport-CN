@@ -7,7 +7,7 @@
   const panel = document.getElementById("tools");
   const toggle = document.getElementById("tools-toggle");
   const toast = document.getElementById("toast");
-  let toastTimer, ready = false, resourceFailure = false;
+  let toastTimer, ready = false, resourceFailure = false, audioEntryPending = false;
   const showMessage = message => {
     toast.textContent = message;
     toast.hidden = false;
@@ -37,6 +37,7 @@
     if (event.source !== frame.contentWindow || event.origin !== location.origin) return;
     if (event.data?.type === "game-ready") { ready = true; loading.hidden = true; fit(); }
     if (event.data?.type === "game-needs-tap") {
+      audioEntryPending = true;
       loading.classList.add("ready");
       loading.querySelector("small").textContent = "点击后开启游戏音乐";
       document.getElementById("enter").hidden = false;
@@ -70,7 +71,9 @@
       }
       if (!ready) {
         loading.querySelector("p").textContent = "正在打开游戏…";
-        loading.querySelector("small").textContent = "正在加载剧情和图片";
+        loading.querySelector("small").textContent = audioEntryPending
+          ? "点击后开启游戏音乐" : "正在加载剧情和图片";
+        document.getElementById("enter").hidden = !audioEntryPending;
       }
     }
   });
@@ -89,6 +92,7 @@
   const gameWindow = () => frame.contentWindow;
   const gameEngine = () => gameWindow().TYRANO?.kag;
   document.getElementById("enter").onclick = () => {
+    audioEntryPending = false;
     const w = gameWindow();
     gameEngine()?.readyAudio();
     w.Howler?.ctx?.resume();
