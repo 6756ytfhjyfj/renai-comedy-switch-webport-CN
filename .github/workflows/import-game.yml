@@ -1,4 +1,4 @@
-name: Import complete game resources
+name: Repair resource filenames and verify source
 on:
   push:
     branches: [main]
@@ -10,36 +10,63 @@ concurrency:
   group: import-game
   cancel-in-progress: false
 jobs:
-  import:
+  repair:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: Check repository
+      - name: Restore original UTF-8 filenames
         run: |
-          test ! -f game/data/system/Config.tjs
-      - name: Download complete website
-        env:
-          BUNDLE_URL: https://broker-warm-precious-survival.trycloudflare.com/site.zip
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+          root = Path.cwd()
+          files = []
+          for directory, children, names in os.walk(root):
+              children[:] = [x for x in children if x not in ('.git', '.github')]
+              files.extend(Path(directory) / name for name in names)
+          repaired = 0
+          for source in files:
+              name = source.relative_to(root).as_posix()
+              corrected = name.encode('cp866').decode('utf-8') if any(ord(c) > 127 for c in name) else name
+              if corrected == name:
+                  continue
+              target = root / corrected
+              assert target.is_relative_to(root) and not target.exists(), corrected
+              target.parent.mkdir(parents=True, exist_ok=True)
+              source.rename(target)
+              repaired += 1
+          assert repaired == 1679, repaired
+          for directory, children, names in os.walk(root, topdown=False):
+              path = Path(directory)
+              if path == root or '.git' in path.relative_to(root).parts or '.github' in path.relative_to(root).parts:
+                  continue
+              if not any(path.iterdir()):
+                  path.rmdir()
+          print(f'Restored {repaired} original resource filenames.')
+          PY
+          git -c core.autocrlf=false add -A .
+      - name: Verify all 2590 website files against tested local source
         run: |
-          curl --fail --location --retry 8 --retry-all-errors --retry-delay 3 --connect-timeout 20 --max-time 1800 --continue-at - --silent --show-error --write-out 'Downloaded %{size_download} bytes at %{speed_download} bytes/s\n' "$BUNDLE_URL" --output "$RUNNER_TEMP/game-site.zip"
-          echo "230461cf3b787c7067f9398b21b10907dc7292fd3a91e5e4d451ac76e5df312c  $RUNNER_TEMP/game-site.zip" | sha256sum --check -
-      - name: Extract and verify complete website
+          python3 - <<'PY'
+          import hashlib, subprocess
+          rows = []
+          for line in subprocess.check_output(['git', 'ls-files', '-s', '-z']).split(b'\0'):
+              if not line:
+                  continue
+              metadata, name = line.split(b'\t', 1)
+              if name.startswith(b'.github/'):
+                  continue
+              rows.append(name + b'\0' + metadata.split()[1] + b'\n')
+          assert len(rows) == 2590, len(rows)
+          digest = hashlib.sha256(b''.join(sorted(rows))).hexdigest()
+          assert digest == '4335c8b014be3be23b674e4ae14d7e476c53af5532a14b31f563ac6543ce7b52', digest
+          print('Every filename and Git blob matches the verified local website.')
+          PY
+      - name: Commit verified resource filenames
         run: |
-          mkdir -p "$RUNNER_TEMP/game-site"
-          unzip -q "$RUNNER_TEMP/game-site.zip" -d "$RUNNER_TEMP/game-site"
-          test -f "$RUNNER_TEMP/game-site/index.html"
-          test -f "$RUNNER_TEMP/game-site/game/data/others/lang/ch.json"
-          test -f "$RUNNER_TEMP/game-site/game/data/system/Config.tjs"
-          test "$(find "$RUNNER_TEMP/game-site" -type f | wc -l)" -eq 2591
-          test "$(find "$RUNNER_TEMP/game-site/game/data/video" -iname '*.mp4' | wc -l)" -eq 23
-          test -z "$(find "$RUNNER_TEMP/game-site" -iname '*.sav' -print -quit)"
-      - name: Commit full website to this repository
-        run: |
-          rsync -a --exclude='.github/' "$RUNNER_TEMP/game-site/" "$GITHUB_WORKSPACE/"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git -c core.autocrlf=false add .
-          git commit --quiet -m 'Import full Chinese game with mobile landscape web support'
+          git commit --quiet -m 'Restore original UTF-8 resource filenames'
           git push origin HEAD:main
-          echo 'Full game resources are now stored permanently in this repository.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'All 2590 website files match the tested local source.' >> "$GITHUB_STEP_SUMMARY"
