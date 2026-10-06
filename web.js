@@ -7,7 +7,7 @@
   const panel = document.getElementById("tools");
   const toggle = document.getElementById("tools-toggle");
   const toast = document.getElementById("toast");
-  let toastTimer, ready = false;
+  let toastTimer, ready = false, resourceFailure = false;
   const showMessage = message => {
     toast.textContent = message;
     toast.hidden = false;
@@ -43,14 +43,49 @@
     }
     if (event.data?.type === "game-tap") closeTools();
     if (event.data?.type === "game-message") showMessage(event.data.message);
+    if (event.data?.type === "resource-retrying") {
+      if (!ready && !resourceFailure) loading.querySelector("p").textContent = "网络较慢，正在自动重试…";
+    }
+    if (event.data?.type === "resource-failed") {
+      resourceFailure = true;
+      loading.hidden = false;
+      loading.querySelector("p").textContent = "剧情文件暂时加载失败";
+      loading.querySelector("small").textContent = event.data.status === 404
+        ? "服务器暂未提供这个文件，请稍后重试"
+        : event.data.reason === "parsererror"
+          ? "文件内容无法读取，请重试"
+          : "网络连接中断或响应过慢，请检查网络后继续加载";
+      document.getElementById("enter").hidden = true;
+      const retry = document.getElementById("retry");
+      retry.textContent = "继续加载";
+      retry.hidden = false;
+    }
+    if (event.data?.type === "resource-recovered" && event.data.remaining === 0) {
+      if (resourceFailure) {
+        resourceFailure = false;
+        const retry = document.getElementById("retry");
+        retry.hidden = true;
+        retry.textContent = "重新加载";
+        if (ready) loading.hidden = true;
+      }
+      if (!ready) {
+        loading.querySelector("p").textContent = "正在打开游戏…";
+        loading.querySelector("small").textContent = "正在加载剧情和图片";
+      }
+    }
   });
   setTimeout(() => {
-    if (!ready && document.getElementById("enter").hidden) {
+    if (!ready && !resourceFailure && document.getElementById("enter").hidden) {
       loading.querySelector("p").textContent = "加载时间较长，请检查网络";
       document.getElementById("retry").hidden = false;
     }
   }, 30000);
-  document.getElementById("retry").onclick = () => { frame.src = frame.src; };
+  document.getElementById("retry").onclick = () => {
+    if (resourceFailure) {
+      loading.querySelector("small").textContent = "正在重新连接，请稍候…";
+      frame.contentWindow.postMessage({ type: "resource-retry" }, location.origin);
+    } else { frame.src = frame.src; }
+  };
   const gameWindow = () => frame.contentWindow;
   const gameEngine = () => gameWindow().TYRANO?.kag;
   document.getElementById("enter").onclick = () => {
